@@ -2,12 +2,15 @@ import boto3
 
 ec2 = boto3.client('ec2')
 
-# List of instance IDs
-instance_ids = ['i-1234567890abcdef0', 'i-2345678901abcdef1']
+tag_key = 'myKey'
+tag_value = 'myValue'
 
-# New tag key and value
-new_key = 'myKey'
-new_value = 'myNewValue'
+response = ec2.describe_hosts(Filters=[
+    {
+        'Name': 'tag:' + tag_key,
+        'Values': [tag_value],
+    },
+])
 
-for instance_id in instance_ids:
-    ec2.create_tags(Resources=[instance_id], Tags=[{'Key': new_key, 'Value': new_value}])
+for host in response['Hosts']:
+    print(f"Dedicated Host ID: {host['HostId']}")
